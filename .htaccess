@@ -1,0 +1,46 @@
+RewriteEngine on
+
+#--------------------------------------------
+#           Instalador
+#--------------------------------------------
+RewriteRule ^install/$ install/index.php
+
+#--------------------------------------------
+#           Debug
+#--------------------------------------------
+RewriteRule ^debug/([a-zA-Z0-9-]+)/$ index.php?controller=debug&mod=$1
+RewriteRule ^debug/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/$ index.php?controller=debug&mod=$1&id=$2
+
+#--------------------------------------------
+#           Ajax
+#--------------------------------------------
+RewriteRule ^ajax/([a-zA-Z0-9-]+)/$ index.php?controller=ajax&mod=$1
+
+#--------------------------------------------
+#           Cronjobs
+#--------------------------------------------
+#TEST
+RewriteRule ^cronjob/([a-zA-Z0-9-._]+)/$ index.php?controller=crons&mod=$1&token=s7gkfKScZPs1BEFUdeMkt2CqdrFayaOt
+RewriteRule ^cronjob/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=crons&mod=$1&token=$2
+
+#--------------------------------------------
+#           Api
+#--------------------------------------------
+RewriteRule ^api/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=api&mod=$1&token=$2
+
+#--------------------------------------------
+#           Admin
+#--------------------------------------------
+RewriteRule ^admin/$ index.php?controller=admin
+RewriteRule ^admin/([a-zA-Z0-9-._]+)/$ index.php?controller=admin&mod=$1
+RewriteRule ^admin/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=admin&mod=$1&data=$2
+RewriteRule ^admin/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=admin&mod=$1&data=$2&data2=$3
+
+#--------------------------------------------
+#           Regular Core Stuff
+#--------------------------------------------
+RewriteRule ^$ index.php?controller=default [L]
+RewriteRule ^([a-z]+)/$ index.php?lang=$1
+RewriteRule ^([a-z]+)/([a-zA-Z0-9-]+)/$ index.php?lang=$1&mod=$2
+RewriteRule ^([a-z]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-=.]+)/$ index.php?lang=$1&controller=default&mod=$2&data=$3
+RewriteRule ^([a-z]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-=.]+)/([a-zA-Z0-9-=.]+)/$ index.php?lang=$1&controller=default&mod=$2&data=$3&data2=$4
