@@ -79,8 +79,7 @@ class ApiController
         return;
     }
 
-	public function add($page,$data)
-	{
+	public function add($page,$data){
 		if( $page == $this->page )
 			return $data($this->app);
 	}

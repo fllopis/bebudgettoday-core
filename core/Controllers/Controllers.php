@@ -32,7 +32,7 @@ class Controllers
 	public function load()
 	{
 		//Language
-		if(isset($_GET['lang'])){
+		/*if(isset($_GET['lang'])){
 
 			//Obtenemos el parametro idioma de la URL.
 			$lang = $this->app['tools']->getValue('lang');
@@ -78,7 +78,7 @@ class Controllers
 				header('Location: ' . _DOMINIO_.$defaultLang->slug.'/');
 				exit;
 			}
-		}
+		}*/
 
 		//Controlador
 		$controller = $this->app['tools']->getValue('controller', $this->defaultController);

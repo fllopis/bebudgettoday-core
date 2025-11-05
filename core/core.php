@@ -79,7 +79,7 @@ $app = $render->APP();
 $app['bd']->openBd();
 
 //Establecemos idioma por defecto
-$app['lang']->setLanguage();
+// $app['lang']->setLanguage();
 
 // Cargamos controllador
 $app['controller']->load();
