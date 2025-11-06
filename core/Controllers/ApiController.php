@@ -25,7 +25,7 @@ class ApiController
 			$_users 	= new Users($this->app);
 
 			//Checking if provide from provider or local login.
-			if($this->app['validate']->is_provider()){
+			if($this->app['validate']->is_provider($_REQUEST)){
 				//Provider login
 				$auth_provider 	= $this->app['tools']->getValue('auth_provider');
 				$provider_token 	= $this->app['tools']->getValue('provider_token');

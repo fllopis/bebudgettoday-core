@@ -87,17 +87,24 @@ class Users
             return $validationResponse;
         }
 
-        $register = $this->app['bd']->insert("users", [
-            'auth_provider'     => isset($data['auth_provider']) ? $data['auth_provider'] : 'local',
-            'provider_token'    => isset($data['provider_token']) ? $data['provider_token'] : '',
-            'account_type'      => isset($data['account_type']) ? $data['account_type'] : 'standard',
-            'name'              => $data['name'],
-            'email'             => $data['email'],
-            'password'          => $this->app['tools']->md5($data['password']),
-            'avatar_url'        => isset($data['avatar_url']) ? $data['avatar_url'] : '',
-            'created_at'        => $this->app['tools']->datetime(),
-            'updated_at'        => $this->app['tools']->datetime()
-        ]);
+        //Validation for creation
+        $doRegistration = $this->app['validate']->valid_providerRegistration($data);
+
+        if($doRegistration){
+            $register = $this->app['bd']->insert("users", [
+                'auth_provider'     => isset($data['auth_provider']) ? $data['auth_provider'] : 'local',
+                'provider_token'    => isset($data['provider_token']) ? $data['provider_token'] : '',
+                'account_type'      => isset($data['account_type']) ? $data['account_type'] : 'standard',
+                'name'              => $data['name'],
+                'email'             => $data['email'],
+                'password'          => (isset($data['password']) && $data['password'] != "") ? $this->app['tools']->md5($data['password']) : '',
+                'avatar_url'        => isset($data['avatar_url']) ? $data['avatar_url'] : '',
+                'created_at'        => $this->app['tools']->datetime(),
+                'updated_at'        => $this->app['tools']->datetime()
+            ]);
+        } else {
+            $register = true;
+        }
 
         if($register){
             //Returning the user data to auto login after register.
