@@ -70,7 +70,7 @@ function el($var, $base64_encode=true, $json_encode=true)
 }
 
 // Render
-$render = new App\Render();
+$render = new App\Render();     
 
 // Creamos App
 $app = $render->APP();

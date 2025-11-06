@@ -19,31 +19,53 @@ class ApiController
 			exit;
 		}
 
-		//API:: 
-		$this->add('auth/login',function(){
+		//API:: Login
+		$this->add('auth-login',function(){
 			//Default vars
 			$_users 	= new Users($this->app);
-			$email 		= $this->app['tools']->getValue('email');
-			$password 	= $this->app['tools']->getValue('password');
 
-			$response = $_user->onLogin($email, $password);
+			//Checking if provide from provider or local login.
+			if($this->app['validate']->is_provider()){
+				//Provider login
+				$auth_provider 	= $this->app['tools']->getValue('auth_provider');
+				$provider_token 	= $this->app['tools']->getValue('provider_token');
+
+				$response = $_users->onProviderLogin($auth_provider, $provider_token);
+			} else {
+				//Local login
+				$email 		= $this->app['tools']->getValue('email');
+				$password 	= $this->app['tools']->getValue('password');
+
+				$response = $_users->onLogin($email, $password);
+			}
 
 			$this->onReturn($response);
 		});	
 
-		//API:: Register -- TODO
-		$this->add('auth/register',function(){
-			// $_casos = new Casos($this->app);
-			// $response = $_casos->wsGetModelosByIdCaso();
+		//API:: Register
+		$this->add('auth-register',function(){
+			//Default vars
+			$_users = new Users($this->app);
 
-			// if( is_object($response) || is_array($response) )
-			// 	$this->result($response, 'success');
-			// else
-			// 	$this->result(false, 'error', $response, 400);
+			if(isset($_REQUEST['data'])){
+				$dataReceived = $this->app['tools']->getValue('data');
+				$data = json_decode($dataReceived, true);
+
+				//Checking if is a valid json. This validation is only for API requests
+				if (json_last_error() !== JSON_ERROR_NONE) {
+					$response =  "Data is not a valid JSON.";
+				} else {
+					$response 	= $_users->onRegister($data);
+				}
+			} else {
+				$response = "No data for register found. Try again.";
+			}
+
+			$this->onReturn($response);
 		});
 
 		//API:: Login OR Register with Google -- TODO
-		$this->add('auth/google',function(){
+		$this->add('google',function(){
 			// $_casos = new Casos($this->app);
 			// $response = $_casos->wsGetModelosByIdCaso();
 
@@ -51,6 +73,7 @@ class ApiController
 			// 	$this->result($response, 'success');
 			// else
 			// 	$this->result(false, 'error', $response, 400);
+			return "google";
 		});
 
 	}

@@ -86,6 +86,39 @@ class Tools
 	*/
 
 	/**
+	 * Devuelve si un imei es valido.
+	 *
+	 * @param string $var
+	 * @return string
+	 */
+	public function arrayUtf8($var,$deep=TRUE){
+	    if(is_array($var))
+	    {
+	        foreach($var as $key => $value)
+	        {
+	            if($deep)
+	                $var[$key] = $this->arrayUtf8($value,$deep);
+	            elseif(!is_array($value) && !is_object($value) && !mb_detect_encoding($value,'utf-8',true))
+	                 $var[$key] = utf8_encode($var);
+	        }
+	        return $var;
+	    }
+	    elseif(is_object($var))
+	    {
+	        foreach($var as $key => $value)
+	        {
+	            if($deep)
+	                $var->$key = $this->arrayUtf8($value,$deep);
+	            elseif(!is_array($value) && !is_object($value) && !mb_detect_encoding($value,'utf-8',true))
+	                 $var->$key = utf8_encode($var);
+	        }
+	        return $var;
+	    }
+	    else
+	        return (!mb_detect_encoding($var,'utf-8',true))?utf8_encode($var):$var;
+	}
+
+	/**
 	 * Devuelve la extension de un archivo en minúsculas
 	 *
 	 * @param string $file nombre del archivo
