@@ -11,86 +11,77 @@ class Configuracion
 	}
 
 	/**
-	 * Obtiene un valor de la tabla configuracion
+	 * Get a value from the configuration table
 	 *
-	 * @param string $nombre
-	 * @return string Value
+	 * @param string $shortcode
+	 * @return string value
 	 */
-	public function get($key)
-	{
-		$result = $this->app['bd']->fetchRow('SELECT valor FROM configuracion WHERE nombre = "'.$key.'"');
+	public function get($shortcode){
+		$result = $this->app['bd']->fetchRow('SELECT value FROM configurations WHERE shortcode = "'.$shortcode.'"');
 
 		if( !empty($result) )
-			return $result->valor;
+			return $result->value;
 
 		return false;
 	}
 
     /**
-     * Obtiene varios valores de la tabla configuracion
+     * Obtains several values from the configuration table.
      *
      * @throws Exception
-     * @param array $keys
-     * @return array $key => $value
+     * @param array $shortcodes
+     * @return array $shortcodes => $value
      */
-	public function getMultiple($keys)
-	{
-		if (!is_array($keys))
-			throw new \Exception('Variable $keys no es un array');
+	public function getMultiple($shortcodes){
+		if (!is_array($shortcodes))
+			throw new \Exception('Is not a valid array');
 
         $result = array();
 
-        foreach( $keys as $k )
-            $result[$k] = $this->get($k);
+        foreach( $shortcodes as $shortcode )
+            $result[$shortcode] = $this->get($shortcode);
 
         return (!empty($result) ? $result : false);
 	}
 
     /**
-     * Comprueba si un nombre existe en la tabla
+     * Check if a name exists in the table
      *
-     * @param string $key
+     * @param string $shortcode
      * @return bool
      */
-    public function checkKey($key)
-    {
-        $result = $this->app['bd']->fetchRow('SELECT nombre FROM configuracion WHERE nombre = "'.$key.'"');
+    public function checkKey($shortcode){
+        $result = $this->app['bd']->fetchRow('SELECT shortcode FROM configurations WHERE shortcode = "'.$shortcode.'"');
         return (!empty($result) ? true : false);
     }
 
     /**
-     * Actualiza un nombre y valor en la base de datos. Si no existe lo crea
+     * Updates a name and value in the database. If it does not exist, it creates it.
      *
-     * @param string $key
+     * @param string $shortcode
      * @param string $value
-     * @return bool Resultado actualizacion
+     * @return bool Update result
      */
-    public function updateValue($key, $value)
-    {
+    public function updateValue($shortcode, $value){
         $result = false;
 
         $currentTime = $this->app['tools']->datetime();
 
-        if( $this->checkKey($key) )
-        {
-            $updConfig = array(
-                'valor' => $value,
-                'date_modified' => $currentTime,
-                'date_created' => $currentTime
-            );
-            if( $this->app['bd']->update('configuracion', $updConfig, 'nombre = "'.$key.'"') )
+        if($this->checkKey($shortcode)){
+            $updConfig = [
+                'value' => $value,
+            ];
+            if( $this->app['bd']->update('configurations', $updConfig, 'shortcode = "'.$shortcode.'"') )
                 $result = true;
         }
         else
         {
-            $addConfig = array(
-                'nombre' => $key,
-                'valor' => $value,
-                'date_modified' => $currentTime,
-                'date_created' => $currentTime
-            );
+            $addConfig = [
+                'shortcode' => $shortcode,
+                'value' => $value,
+            ];
 
-            if( $this->app['bd']->insert('configuracion', $addConfig) )
+            if( $this->app['bd']->insert('configurations', $addConfig) )
                 $result = true;
         }
 
