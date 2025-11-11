@@ -78,7 +78,7 @@ class Users
 	 * Function to do register on APP (TODO: Web?)
 	 * @return object | User data
 	 */
-    public function onRegister($data){
+    public function onRegister($data, $doRegistration = true){
         //Validating data for register
         $validationResponse = $this->app['validate']->valid_register($data);
 
@@ -86,9 +86,6 @@ class Users
         if($validationResponse !== true){
             return $validationResponse;
         }
-
-        //Validation for creation
-        $doRegistration = $this->app['validate']->valid_providerRegistration($data);
 
         if($doRegistration){
             $register = $this->app['bd']->insert("users", [
@@ -117,4 +114,30 @@ class Users
             return "There was an error during the registration. Please, try again.";
         }
 	}
+
+    public function onRegisterProvider($data){
+        //Checking if provider and auth exists.
+        $doRegistration = $this->app['validate']->valid_providerRegistration($data);
+
+        //If provider with token doesn't exist we need to check the email, because if exists in BBDD we need to associate token & email.
+        if($doRegistration){
+            if($this->app['validate']->valid_providerAssociation($data)){
+
+                //We need to update the token and auth_provider to user.
+                $updateData['auth_provider']    = $data['auth_provider'];
+                $updateData['provider_token']   = $data['provider_token'];
+                $updateData['updated_at']       = $this->app['tools']->datetime();
+
+                $this->app['bd']->update("users", $updateData, " email = '".$data['email']."'");
+
+                //And also do login and return
+                return $this->onProviderLogin($data['auth_provider'], $data['provider_token']);
+            }
+        } else {
+            return $this->onProviderLogin($data['auth_provider'], $data['provider_token']);
+        }
+
+        //Calling on registration user if provider, auth and email don't exist or match
+        return $this->onRegister($data, $doRegistration);
+    }
 }

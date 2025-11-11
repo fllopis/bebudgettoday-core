@@ -64,16 +64,26 @@ class ApiController
 			$this->onReturn($response);
 		});
 
-		//API:: Login OR Register with Google -- TODO
-		$this->add('google',function(){
-			// $_casos = new Casos($this->app);
-			// $response = $_casos->wsGetModelosByIdCaso();
+		//API:: Login OR Register with Google
+		$this->add('auth-google',function(){
+			//Default vars
+			$_users = new Users($this->app);
 
-			// if( is_object($response) || is_array($response) )
-			// 	$this->result($response, 'success');
-			// else
-			// 	$this->result(false, 'error', $response, 400);
-			return "google";
+			if(isset($_REQUEST['data'])){
+				$dataReceived = $this->app['tools']->getValue('data');
+				$data = json_decode($dataReceived, true);
+
+				//Checking if is a valid json. This validation is only for API requests
+				if (json_last_error() !== JSON_ERROR_NONE) {
+					$response =  "Data is not a valid JSON.";
+				} else {
+					$response 	= $_users->onRegisterProvider($data);
+				}
+			} else {
+				$response = "No data for register found. Try again.";
+			}
+
+			$this->onReturn($response);
 		});
 
 	}

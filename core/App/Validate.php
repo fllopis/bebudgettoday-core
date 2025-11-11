@@ -38,13 +38,6 @@ class Validate
 		return true;
 	}
 
-	public function valid_ip($data){
-		if( filter_var($data, FILTER_VALIDATE_IP) )
-			return true;
-		else
-			return false;
-	}
-
 	public function is_provider($data){
 		return (isset($data['auth_provider']) && $data['auth_provider'] != 'local') ? true : false;
 	}
@@ -122,6 +115,17 @@ class Validate
         }
 
         return $doRegistration;
+	}
+
+	public function valid_providerAssociation($data){
+		//Checking if email exists to associate new token to this email
+        if( isset($data['email']) ){
+            if($this->app['bd']->countRows("SELECT * FROM users WHERE email = '".$data['email']."'") == 1){
+                return true;
+            }
+        }
+
+        return false;
 	}
 }
 ?>
