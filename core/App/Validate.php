@@ -10,33 +10,11 @@ class Validate
         $this->app = $app;
     }
 
-	//Validate password
-	public function valid_pass($data){
-		if(strlen($data) < 6)
-	      return false;
-		
-		if(strlen($data) > 16)
-		  return false;
-		
-		if(!preg_match('`[a-zA-Z]`',$data))
-		  return false;
-		
-		if(!preg_match('`[0-9]`',$data))
-		  return false;
-			
-		return true;
-	}
-
-	//Validate password v2
-	public function valid_pass2($data){
-		if(strlen($data) < 6)
-	      return false;
-
-		if(strlen($data) > 16)
-		  return false;
-
-		return true;
-	}
+    /********************************
+     *								*
+     *		 AUTH VALIDATIONS		*
+     *								*						
+     ********************************/
 
 	public function is_provider($data){
 		return (isset($data['auth_provider']) && $data['auth_provider'] != 'local') ? true : false;
