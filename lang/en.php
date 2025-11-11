@@ -24,13 +24,22 @@
         'AUTH_REGISTRATION_PASSWORD_SHORT' => 'Password must be at least 6 characters long.',
         'AUTH_REGISTRATION_NAME_EMPTY' => 'The name cannot be empty. You can make it up 😉.',
         'AUTH_REGISTRATION_PROVIDER_TOKEN_WRONG' => 'Wrong token for registration. Please, try again 😃.',
-        'AUTH_REGISTRATION_UNKNOW_ERROR' => 'There was an error during the registration. Please, try again.'
+        'AUTH_REGISTRATION_UNKNOW_ERROR' => 'There was an error during the registration. Please, try again.',
 
         /****************************
          *                          *
-         *      OTHER TRANSLAT      *
+         *        CATEGORIES        *
          *                          *
          ****************************/
+
+        //VALIDATIONS
+        'CATEGORY_VALIDATION_NAME_EMPTY' => 'The name of the category cannot be empty.',
+        'CATEGORY_VALIDATION_NAME_USED' => 'You already have a category with this name.',
+        'CATEGORY_VALIDATION_CREATION_LIMIT' => 'You have reached the maximum number of categories that can be created 😥.',
+        'CATEGORY_VALIDATION_CREATION_UNKNOW_ERROR' => 'There was an error during the category creation. Please, try again.',
+        'CATEGORY_VALIDATION_UPDATE_UNKNOW_ERROR' => 'There was an error during the category update. Please, try again.',
+        'CATEGORY_VALIDATION_UNKNOW_ERROR' => 'There was an error during category management. Please, try again.',
+        'CATEGORY_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.'
     ];
 
 ?>

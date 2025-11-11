@@ -11,6 +11,15 @@ class Users
   	}
 
     /** 
+     * Function to get user by id
+     * @param string $id_user
+     * @return object | User data
+     */
+    public function getById($id_user){
+        return $this->app['bd']->fetchRow("SELECT * FROM users WHERE id = '".$id_user."'");
+    }
+
+    /** 
 	 * Function to do login on APP (TODO: Web?)
 	 * @param string $email: User email
      * @param string $password: User password
@@ -126,6 +135,11 @@ class Users
         }
 	}
 
+    /** 
+     * Function to register user by provider
+     * @param array $data
+     * @return object | User data
+     */
     public function onRegisterProvider($data){
         //Default vars
         $lang = (isset($data['lang'])) ? $data['lang'] : _DEFAULT_APP_LANGUAGE_;

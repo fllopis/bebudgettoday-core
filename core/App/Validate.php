@@ -1,5 +1,7 @@
 <?php
 namespace App;
+use Funks\Users;
+use Funks\Categories;
 
 class Validate
 { 
@@ -104,6 +106,46 @@ class Validate
         }
 
         return false;
+	}
+
+	/************************************
+     *									*
+     *		 CATEGORIES VALIDATIONS		*
+     *									*						
+     ************************************/
+
+	public function valid_checkCategoryLimit($id_user, $lang){
+		//Default vars
+		$_users = new Users($this->app);
+		$_categories = new Categories($this->app);
+
+		//Getting user data to check if is standard account
+		$userData = $_users->getById($id_user);
+
+		//if user is standard then check the limit categories that has created.
+		if($userData->account_type == 'standard'){
+
+			//Configuration limit.
+			$categoryCreationLimit = $this->app['config']->get('STANDARD_MAX_EXPENSE_CATEGORIES');
+			$totalCategoriesCreated = $_categories->getAllTotal($id_user, "expense");
+
+			if($totalCategoriesCreated == $categoryCreationLimit){
+				return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_CREATION_LIMIT", $lang);
+			}
+		}
+
+		return true;
+	}
+
+	public function valid_category($id_category, $data, $lang = _DEFAULT_APP_LANGUAGE_){
+		if( $data['name'] == "" ){
+			return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_NAME_EMPTY", $lang);
+		}
+		if($this->app['bd']->countRows("SELECT * FROM categories WHERE name = '".$data['name']."' AND id != '".$id_category."'") > 0){
+			return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_NAME_USED", $lang);
+		}
+
+		return true;
 	}
 }
 ?>
