@@ -102,6 +102,14 @@ class Users
                 'created_at'        => $this->app['tools']->datetime(),
                 'updated_at'        => $this->app['tools']->datetime()
             ]);
+
+
+            //Creating default Categories
+            //-------------------------------------
+            $id_user = $this->app['bd']->lastId();
+            $_categories = new Categories($this->app);
+            $_categories->createDefaultCategories($id_user);
+            
         } else {
             $register = true;
         }
