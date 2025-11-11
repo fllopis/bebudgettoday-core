@@ -190,18 +190,14 @@ class Render
 		//Añadimos Configuracion
 		$app['config'] = new Configuracion($app);
 
-		//Añadimos Validate
-		$app['validate'] = new Validate($app);
-
 		//Añadimos Languages
 		$app['lang'] = new Languages($app);
 
+		//Añadimos Validate
+		$app['validate'] = new Validate($app);
+
 		//Añadimos controlador
 		$app['controller'] = new Controllers($app);
-
-		//Rellamamos algunas clases enviando el app completo
-		$app['tools'] = new Tools($app);
-		$app['config'] = new Configuracion($app);
 
 		//Añadimos Metas
 		$app['metas'] = new Metas($app);

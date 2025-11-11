@@ -1120,4 +1120,31 @@ class Languages
 
     	return json_encode($cookiesArray);
     }
+
+    /********************************************
+	 *											*
+	 * 			STATIC TRANSLATIONS 			*
+	 *											*
+     ********************************************/
+
+    public function getTranslationStatic($shortcode, $lang = _DEFAULT_APP_LANGUAGE_, $vars = []) {
+    	//Default vars
+	    static $cache = [];
+
+	    if (!isset($cache[$lang])) {
+	        $file = _PATH_ . "/lang/$lang.php";
+	        $cache[$lang] = file_exists($file)
+	            ? include $file
+	            : include _PATH_ . "/lang/en.php";
+	    }
+	    
+	    $text = $cache[$lang][$shortcode] ?? $shortcode;
+
+	    // Replace placeholders
+	    foreach ($vars as $key => $value) {
+	        $text = str_replace("%$key%", $value, $text);
+	    }
+
+	    return $text;
+	}
 }

@@ -15,9 +15,15 @@ class ApiController
 		$this->app['render']->layout = false;
 
 		if( $this->app['tools']->getValue('token') != _API_TOKEN_ ){
-			$this->result(false, 'error', 'Acceso denegado, el token proporcionado no es válido.', 400);
+			$this->result(false, 'error', 'Access denied, the token provided is invalid.', 400);
 			exit;
 		}
+
+		/****************************************
+	     *										*
+	     *		 AUTHENTICATION ENDPOINTS		*
+	     *										*						
+	     ****************************************/
 
 		//API:: Login
 		$this->add('auth-login',function(){
@@ -27,16 +33,18 @@ class ApiController
 			//Checking if provide from provider or local login.
 			if($this->app['validate']->is_provider($_REQUEST)){
 				//Provider login
-				$auth_provider 	= $this->app['tools']->getValue('auth_provider');
+				$auth_provider 		= $this->app['tools']->getValue('auth_provider');
 				$provider_token 	= $this->app['tools']->getValue('provider_token');
+				$lang 				= $this->app['tools']->getValue('lang');
 
-				$response = $_users->onProviderLogin($auth_provider, $provider_token);
+				$response = $_users->onProviderLogin($auth_provider, $provider_token, $lang);
 			} else {
 				//Local login
 				$email 		= $this->app['tools']->getValue('email');
 				$password 	= $this->app['tools']->getValue('password');
+				$lang 		= $this->app['tools']->getValue('lang');
 
-				$response = $_users->onLogin($email, $password);
+				$response = $_users->onLogin($email, $password, $lang);
 			}
 
 			$this->onReturn($response);

@@ -16,9 +16,9 @@ class Users
      * @param string $password: User password
 	 * @return object | User data
 	 */
-    public function onLogin($email, $password){
+    public function onLogin($email, $password, $lang){
         //Login validations
-        $validationResponse = $this->app['validate']->valid_login($email, $password);
+        $validationResponse = $this->app['validate']->valid_login($email, $password, $lang);
         if($validationResponse !== true){
             return $validationResponse;
         }
@@ -49,9 +49,9 @@ class Users
      * @param string $auth_provider: Auth provider (google, facebook, etc)
 	 * @return object | User data
 	 */
-    public function onProviderLogin($auth_provider, $provider_token){
+    public function onProviderLogin($auth_provider, $provider_token, $lang){
         //Login validations
-        $validationResponse = $this->app['validate']->valid_providerLogin($auth_provider, $provider_token);
+        $validationResponse = $this->app['validate']->valid_providerLogin($auth_provider, $provider_token, $lang);
         if($validationResponse !== true){
             return $validationResponse;
         }
@@ -79,8 +79,11 @@ class Users
 	 * @return object | User data
 	 */
     public function onRegister($data, $doRegistration = true){
+        //Default vars
+        $lang = (isset($data['lang'])) ? $data['lang'] : _DEFAULT_APP_LANGUAGE_;
+
         //Validating data for register
-        $validationResponse = $this->app['validate']->valid_register($data);
+        $validationResponse = $this->app['validate']->valid_register($data, $lang);
 
         //Checking the validation response for register.
         if($validationResponse !== true){
@@ -106,16 +109,19 @@ class Users
         if($register){
             //Returning the user data to auto login after register.
             if(isset($data['auth_provider']) && $data['auth_provider'] != 'local'){
-                return $this->onProviderLogin($data['auth_provider'], $data['provider_token']);
+                return $this->onProviderLogin($data['auth_provider'], $data['provider_token'], $lang);
             } else {
-                return $this->onLogin($data['email'], $data['password']);
+                return $this->onLogin($data['email'], $data['password'], $lang);
             }
         } else {
-            return "There was an error during the registration. Please, try again.";
+            return $this->app['lang']->getTranslationStatic("AUTH_REGISTRATION_UNKNOW_ERROR", $lang);
         }
 	}
 
     public function onRegisterProvider($data){
+        //Default vars
+        $lang = (isset($data['lang'])) ? $data['lang'] : _DEFAULT_APP_LANGUAGE_;
+
         //Checking if provider and auth exists.
         $doRegistration = $this->app['validate']->valid_providerRegistration($data);
 
@@ -131,10 +137,10 @@ class Users
                 $this->app['bd']->update("users", $updateData, " email = '".$data['email']."'");
 
                 //And also do login and return
-                return $this->onProviderLogin($data['auth_provider'], $data['provider_token']);
+                return $this->onProviderLogin($data['auth_provider'], $data['provider_token'], $lang);
             }
         } else {
-            return $this->onProviderLogin($data['auth_provider'], $data['provider_token']);
+            return $this->onProviderLogin($data['auth_provider'], $data['provider_token'], $lang);
         }
 
         //Calling on registration user if provider, auth and email don't exist or match
