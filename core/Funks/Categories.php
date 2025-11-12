@@ -83,9 +83,30 @@ class Categories
      * Function to get category by id
      * @param string $id_user
      * @param string $id_category
+     * @param string $lang
      */
-    public function getById($id_user, $id_category){
-        return $this->app['bd']->fetchRow("SELECT id, type, name, icon, color FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'");
+    public function getById($id_user, $id_category, $lang){
+        $data = $this->app['bd']->fetchRow("SELECT id, type, name, icon, color FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'");
+
+        if(!$data){
+            return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_NOT_FOUND_FOR_USER", $lang);
+        }
+
+        return $data;
+    }
+
+    /** 
+     * Function to get category by id
+     * @param string $id_user
+     * @param string $id_category
+     * @param string $lang
+     */
+    public function checkCategoryOnUser($id_user, $id_category){
+        if($this->app['bd']->countRows("SELECT id FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'") > 0){
+            return true;
+        }
+
+        return false;
     }
 
     /** 

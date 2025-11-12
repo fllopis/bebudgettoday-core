@@ -43,7 +43,8 @@
         'CATEGORY_VALIDATION_ID_REQUIRED' => 'Category ID is required for this action.',
         'CATEGORY_VALIDATION_DELETING_ERROR' => 'There was an error during category deletion. Please, try again.',
         'CATEGORY_VALIDATION_DELETING_SUCCESS' => 'Category deleted successfully.',
-        'CATEGORY_VALIDATION_DELETING_NOT_FOUND' => 'Category not found or already deleted.'
+        'CATEGORY_VALIDATION_DELETING_NOT_FOUND' => 'Category not found or already deleted.',
+        'CATEGORY_VALIDATION_NOT_FOUND_FOR_USER' => 'Category not found for this user.'
     ];
 
 ?>

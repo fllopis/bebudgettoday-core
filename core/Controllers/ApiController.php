@@ -100,7 +100,7 @@ class ApiController
 					}
 
 		            if ($id_category) {
-		                return $this->onReturn($_categories->getById($id_user, $id_category));
+		                return $this->onReturn($_categories->getById($id_user, $id_category, $lang));
 		            } else {
 		                return $this->onReturn($_categories->getAll($id_user, $type));
 		            }
