@@ -67,18 +67,19 @@ class Categories
      * @param string $start_date: Start date
      * @param string $end_date: End date
      */
-    public function getCategoriesWithPercentage($id_user, $start_date, $end_date) {
+    public function getAllWithStats($id_user, $type, $start_date, $end_date) {
         //Default vars
         $response = [];
 
         // Get all categories for the user
-        $categories = $this->getAll($id_user);
+        $categories = $this->getAll($id_user, $type);
         
         // Get total amount of transactions in the date range
         $totalResult = $this->app['bd']->fetchRow("
             SELECT SUM(amount) as total
             FROM transactions
             WHERE id_user = ".$id_user."
+            AND type = '".$type."'
             AND transaction_date BETWEEN '".$start_date."' AND '".$end_date."'
         ");
         $totalAmount = $totalResult->total ?? 0;
@@ -95,7 +96,7 @@ class Categories
             $categoryTotal = $categoryTotalResult->total ?? 0;
 
             // Calculate percentage
-            $percentage = $totalAmount > 0 ? round(($categoryTotal / $totalAmount) * 100, 2) : 0;
+            $percentage = $totalAmount > 0 ? round(($categoryTotal / $totalAmount) * 100) : 0;
 
             $response[] = [
                 'id'        => $category->id,
