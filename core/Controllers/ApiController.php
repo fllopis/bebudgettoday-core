@@ -188,7 +188,7 @@ class ApiController
 						return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_USER_NOT_FOUND", $lang));
 					}
 
-		            if ($id_category) {
+		            if ($id_transaction) {
 		                return $this->onReturn($_transactions->delete($id_user, $id_transaction, $lang));
 		            } else {
 		                return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_ID_REQUIRED", $lang));
