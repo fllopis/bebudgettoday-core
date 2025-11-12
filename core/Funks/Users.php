@@ -1,6 +1,9 @@
 <?php
 namespace Funks;
 
+require_once _PATH_.'core/Helpers/PHPJWT/JWT.php';
+use \Firebase\JWT\JWT;
+
 class Users
 {
 	var $app;
@@ -25,7 +28,12 @@ class Users
      * @param string $password: User password
 	 * @return object | User data
 	 */
-    public function onLogin($email, $password, $lang){
+    public function onLogin($data){
+        //Default vars
+        $email 		= $data['email'] ?? '';
+        $password 	= $data['password'] ?? '';
+        $lang 		= $data['lang'] ?? _DEFAULT_APP_LANGUAGE_;
+
         //Login validations
         $validationResponse = $this->app['validate']->valid_login($email, $password, $lang);
         if($validationResponse !== true){
@@ -42,6 +50,16 @@ class Users
             WHERE email = '".$email."'
             AND password = '".$passwordHash."'
         ");
+
+        //Data to include in JWT Token
+        $payload = [
+            'id' => $datos->id,
+            'name' => $datos->name,
+            'email' => $datos->email,
+        ];
+
+        //Generating JWT Token
+        $jwtToken = JWT::encode($payload, _JWT_SECRET_, 'HS256');
         
         return [
             'id'            => $datos->id,
@@ -49,7 +67,8 @@ class Users
             'name'          => $datos->name,
             'email'         => $datos->email,
             'avatar_url'    => $datos->avatar_url,
-            'created_at'    => $datos->created_at
+            'created_at'    => $datos->created_at,
+            'token'         => $jwtToken
         ];
 	}
 
@@ -73,13 +92,24 @@ class Users
             AND provider_token = '".$provider_token."'
         ");
 
+        //Data to include in JWT Token
+        $payload = [
+            'id' => $datos->id,
+            'name' => $datos->name,
+            'email' => $datos->email,
+        ];
+
+        //Generating JWT Token
+        $jwtToken = JWT::encode($payload, _JWT_SECRET_, 'HS256');
+
 		return [
             'id'            => $datos->id,
             'account_type'  => $datos->account_type,
             'name'          => $datos->name,
             'email'         => $datos->email,
             'avatar_url'    => $datos->avatar_url,
-            'created_at'    => $datos->created_at
+            'created_at'    => $datos->created_at,
+            'token'         => $jwtToken
         ];
 	}
 
@@ -128,7 +158,7 @@ class Users
             if(isset($data['auth_provider']) && $data['auth_provider'] != 'local'){
                 return $this->onProviderLogin($data['auth_provider'], $data['provider_token'], $lang);
             } else {
-                return $this->onLogin($data['email'], $data['password'], $lang);
+                return $this->onLogin($data);
             }
         } else {
             return $this->app['lang']->getTranslationStatic("AUTH_REGISTRATION_UNKNOW_ERROR", $lang);

@@ -27,7 +27,7 @@ RewriteRule ^cronjob/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=
 #           Api
 #--------------------------------------------
 #RewriteRule ^api/([a-zA-Z0-9-._]+)/([a-zA-Z0-9-._]+)/$ index.php?controller=api&mod=$1&token=$2
-RewriteRule ^api/([a-zA-Z0-9-._]+)(?:/([0-9]+))?/?$ index.php?controller=api&mod=$1&id=$2 [QSA,L]
+RewriteRule ^api/([a-zA-Z0-9-._]+)(?:/([a-zA-Z0-9-._]+))?/?$ index.php?controller=api&mod=$1&id=$2 [QSA,L]
 
 
 #--------------------------------------------

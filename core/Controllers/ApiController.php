@@ -8,24 +8,13 @@ class ApiController
 	var $page;
 	var $app;
 
-	public function execute($page,$app)
-	{
+	public function execute($page,$app){
+
 		$this->page = $page;
 		$this->app = $app;
 
 		$this->app['render']->layout = false;
 
-		$apiTokenReceived = $_SERVER['HTTP_AUTHORIZATION'] ?? $this->app['tools']->getValue('token');
-
-		//Extracting Token if is received via Bearer
-		if ($apiTokenReceived && preg_match('/Bearer\s(\S+)/', $apiTokenReceived, $matches)) {
-		    $apiTokenReceived = $matches[1];
-		}
-
-		if( $apiTokenReceived != _API_TOKEN_ ){
-			$this->result(false, 'error', 'Access denied, the token provided is invalid.', 400);
-			exit;
-		}
 
 		/****************************************
 	     *										*
@@ -33,74 +22,53 @@ class ApiController
 	     *										*						
 	     ****************************************/
 
-		//API:: Login
-		$this->add('auth-login',function(){
+		//API:: Auth
+		$this->add('auth',function(){
 			//Default vars
-			$_users 	= new Users($this->app);
+			$authType 	= $this->app['tools']->getValue('id');
 
-			//Checking if provide from provider or local login.
-			if($this->app['validate']->is_provider($_REQUEST)){
-				//Provider login
-				$auth_provider 		= $this->app['tools']->getValue('auth_provider');
-				$provider_token 	= $this->app['tools']->getValue('provider_token');
-				$lang 				= $this->app['tools']->getValue('lang');
+			switch($_SERVER['REQUEST_METHOD']) {
+				//GET
+		        case 'GET':
+					$this->result(false, 'error', 'Method not allowed', 405);
+					break;
+		        case 'POST':
+					//Default vars
+					$_users 	= new Users($this->app);
+					$data 		= $this->getJsonBody();
 
-				$response = $_users->onProviderLogin($auth_provider, $provider_token, $lang);
-			} else {
-				//Local login
-				$email 		= $this->app['tools']->getValue('email');
-				$password 	= $this->app['tools']->getValue('password');
-				$lang 		= $this->app['tools']->getValue('lang');
+					//Controling auth type
+					switch($authType){
+						case 'login':
+							//Login
+							$this->onReturn($_users->onLogin($data));
+							break;
+						case 'register':
+							//Register
+							$this->onReturn($_users->onRegister($data));
+							break;
+						case 'google':
+							//Provider Login
+							$this->onReturn($_users->onRegisterProvider($data));
+							break;
+						default:
+							$this->result(false, 'error', 'Auth type not found', 400);
+							break;
+					}
 
-				$response = $_users->onLogin($email, $password, $lang);
-			}
-
-			$this->onReturn($response);
+		            break;
+		        case 'PUT':
+		        case 'PATCH':
+		            $this->result(false, 'error', 'Method not allowed', 405);
+					break;
+		        case 'DELETE':
+					$this->result(false, 'error', 'Method not allowed', 405);
+					break;
+		        default:
+		            $this->result(false, 'error', 'Method not allowed', 405);
+		           	break;
+		    }
 		});	
-
-		//API:: Register
-		$this->add('auth-register',function(){
-			//Default vars
-			$_users = new Users($this->app);
-
-			if(isset($_REQUEST['data'])){
-				$dataReceived = $this->app['tools']->getValue('data');
-				$data = json_decode($dataReceived, true);
-
-				//Checking if is a valid json. This validation is only for API requests
-				if (json_last_error() !== JSON_ERROR_NONE) {
-					$response =  "Data is not a valid JSON.";
-				} else {
-					$response 	= $_users->onRegister($data);
-				}
-			} else {
-				$response = "No data for register found. Try again.";
-			}
-
-			$this->onReturn($response);
-		});
-
-		//API:: Login OR Register with Google
-		$this->add('auth-google',function(){
-			//Default vars
-			$_users = new Users($this->app);
-
-			if(isset($_REQUEST['data'])){
-				$dataReceived = $this->app['tools']->getValue('data');
-				$data = json_decode($dataReceived, true);
-
-				//Checking if is a valid json. This validation is only for API requests
-				if (json_last_error() !== JSON_ERROR_NONE) {
-					$response =  "Data is not a valid JSON.";
-				} else {
-					$response 	= $_users->onRegisterProvider($data);
-				}
-			} else {
-				$response = "No data for register found. Try again.";
-			}
-
-			$this->onReturn($response);
-		});
 
 		/****************************************
 	     *										*
@@ -110,6 +78,9 @@ class ApiController
 
 		//API:: Categories
 		$this->add('categories',function(){
+			//Validating JWT Token
+			$this->validateJWT();
+			
 			//Default vars
 			$id_category 	= $this->app['tools']->getValue('id');
 
@@ -137,7 +108,7 @@ class ApiController
 
 		        // CREATE
 		        case 'POST':
-		            return $this->handleSaveCategory(0);
+		            return $this->handleSave(0, 'categories');
 
 		        // UPDATE
 		        case 'PUT':
@@ -145,7 +116,7 @@ class ApiController
 		            if (!$id_category) {
 		                return $this->onReturn("ID required for update");
 		            }
-		            return $this->handleSaveCategory($id_category);
+		            return $this->handleSave($id_category, 'categories');
 
 		        case 'DELETE':
 		            if ($id_category) {
@@ -162,7 +133,7 @@ class ApiController
 
 	}
 
-	private function handleSaveCategory($id_category){
+	private function handleSave($id, $type){
 	    $data = $this->getJsonBody();
 
 	    $id_user = $data['id_user'] ?? null;
@@ -174,17 +145,47 @@ class ApiController
 	        );
 	    }
 
-	    $_categories = new Categories($this->app);
+		switch ($type) {
+			case 'categories':
+				$_categories = new Categories($this->app);
 
-	    return $this->onReturn(
-	        $_categories->manageCategory($id_user, $id_category, $data, $lang)
-	    );
+				return $this->onReturn(
+					$_categories->manageCategory($id_user, $id_category, $data, $lang)
+				);
+				break;
+		}
 	}
 
 	private function getJsonBody(){
 	    $raw = file_get_contents('php://input');
 	    $json = json_decode($raw, true);
 	    return is_array($json) ? $json : [];
+	}
+
+	private function validateJWT() {
+		$authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $this->app['tools']->getValue('token');
+
+		if (!$authHeader) {
+			$this->result(false, 'error', 'Authorization header not found', 401);
+			exit;
+		}
+
+		if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+			$this->result(false, 'error', 'Access denied, the token has invalid format.', 401);
+			exit;
+		}
+
+		$jwtToken = $matches[1];
+
+		try {
+			require_once _PATH_.'core/Helpers/PHPJWT/JWT.php';
+        	require_once _PATH_.'core/Helpers/PHPJWT/Key.php';
+
+			\Firebase\JWT\JWT::decode($jwtToken, new \Firebase\JWT\Key(_JWT_SECRET_, 'HS256'));
+		} catch (\Exception $e) {
+			$this->result(false, 'error', 'Access denied, the token provided is invalid.', 401);
+			exit;
+		}
 	}
 
 	private function onReturn($response){
