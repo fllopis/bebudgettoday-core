@@ -83,6 +83,8 @@ class ApiController
 			
 			//Default vars
 			$id_category 	= $this->app['tools']->getValue('id');
+			$id_user 		= (isset($_REQUEST['id_user'])) ? $this->app['tools']->getValue('id_user') : null;
+			$lang 			= (isset($_REQUEST['lang'])) ? $this->app['tools']->getValue('lang') : _DEFAULT_APP_LANGUAGE_;
 
 			//Load class
 			$_categories = new Categories($this->app);
@@ -91,9 +93,7 @@ class ApiController
 				//GET
 		        case 'GET':
 		        	//Default params
-		        	$id_user 		= (isset($_REQUEST['id_user'])) ? $this->app['tools']->getValue('id_user') : null;
-					$lang 			= (isset($_REQUEST['lang'])) ? $this->app['tools']->getValue('lang') : _DEFAULT_APP_LANGUAGE_;
-					$type = (isset($_REQUEST['type'])) ? $this->app['tools']->getValue('type') : "expense";
+					$type 		= (isset($_REQUEST['type'])) ? $this->app['tools']->getValue('type') : "expense";
 
 		        	if(!$id_user){
 						return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_USER_NOT_FOUND", $lang));
@@ -106,24 +106,28 @@ class ApiController
 		            }
 		            break;
 
-		        // CREATE
+		        //CREATE
 		        case 'POST':
 		            return $this->handleSave(0, 'categories');
 
-		        // UPDATE
+		        //UPDATE
 		        case 'PUT':
 		        case 'PATCH':
 		            if (!$id_category) {
-		                return $this->onReturn("ID required for update");
+		                return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_ID_REQUIRED", $lang));
 		            }
 		            return $this->handleSave($id_category, 'categories');
-
+				//DELETE
 		        case 'DELETE':
+
+					if(!$id_user){
+						return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_USER_NOT_FOUND", $lang));
+					}
+
 		            if ($id_category) {
-		                // Eliminar categoría
-		                return $this->onReturn("delete category");
+		                return $this->onReturn($_categories->delete($id_user, $id_category, $lang));
 		            } else {
-		                return $this->onReturn("ID required for delete");
+		                return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_ID_REQUIRED", $lang));
 		            }
 		        default:
 		            $this->result(false, 'error', 'Method not allowed', 405);
@@ -150,7 +154,7 @@ class ApiController
 				$_categories = new Categories($this->app);
 
 				return $this->onReturn(
-					$_categories->manageCategory($id_user, $id_category, $data, $lang)
+					$_categories->manageCategory($id_user, $id, $data, $lang)
 				);
 				break;
 		}

@@ -150,7 +150,18 @@ class Categories
      * @param string $id_user
      * @param string $id_category
      */
-    public function delete($id_user, $id_category){
-        return $this->app['bd']->query("DELETE FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'");
+    public function delete($id_user, $id_category, $lang){
+        //Check if category exists if not is because is delete
+        if($this->app['bd']->countRows("SELECT id FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'")){
+            
+            //Deleting category
+            if($this->app['bd']->query("DELETE FROM categories WHERE id_user = '".$id_user."' AND id = '".$id_category."'")){
+                return [ 'message' => $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_DELETING_SUCCESS", $lang) ];
+            } else{
+                return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_DELETING_ERROR", $lang);
+            }
+        } else{
+            return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_DELETING_NOT_FOUND", $lang);
+        }
     }
 }

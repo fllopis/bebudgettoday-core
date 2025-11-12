@@ -39,7 +39,11 @@
         'CATEGORY_VALIDATION_CREATION_UNKNOW_ERROR' => 'There was an error during the category creation. Please, try again.',
         'CATEGORY_VALIDATION_UPDATE_UNKNOW_ERROR' => 'There was an error during the category update. Please, try again.',
         'CATEGORY_VALIDATION_UNKNOW_ERROR' => 'There was an error during category management. Please, try again.',
-        'CATEGORY_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.'
+        'CATEGORY_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.',
+        'CATEGORY_VALIDATION_ID_REQUIRED' => 'Category ID is required for this action.',
+        'CATEGORY_VALIDATION_DELETING_ERROR' => 'There was an error during category deletion. Please, try again.',
+        'CATEGORY_VALIDATION_DELETING_SUCCESS' => 'Category deleted successfully.',
+        'CATEGORY_VALIDATION_DELETING_NOT_FOUND' => 'Category not found or already deleted.'
     ];
 
 ?>
