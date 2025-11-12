@@ -2,6 +2,7 @@
 namespace Controllers;
 use Funks\Users;
 use Funks\Categories;
+use Funks\Transactions;
 
 class ApiController
 {
@@ -128,6 +129,69 @@ class ApiController
 		                return $this->onReturn($_categories->delete($id_user, $id_category, $lang));
 		            } else {
 		                return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_ID_REQUIRED", $lang));
+		            }
+		        default:
+		            $this->result(false, 'error', 'Method not allowed', 405);
+		           	break;
+		    }
+		});
+
+		/****************************************
+	     *										*
+	     *		  TRANSACTIONS ENDPOINTS		*
+	     *										*						
+	     ****************************************/
+
+		//API:: Transactions
+		$this->add('transactions',function(){
+			//Validating JWT Token
+			$this->validateJWT();
+			
+			//Default vars
+			$id_transaction = $this->app['tools']->getValue('id');
+			$id_user 		= (isset($_REQUEST['id_user'])) ? $this->app['tools']->getValue('id_user') : null;
+			$lang 			= (isset($_REQUEST['lang'])) ? $this->app['tools']->getValue('lang') : _DEFAULT_APP_LANGUAGE_;
+
+			//Load class
+			$_transactions = new Transactions($this->app);
+
+			switch($_SERVER['REQUEST_METHOD']) {
+				//GET
+		        case 'GET':
+		        	//Default params
+					$start_date = (isset($_REQUEST['start_date'])) ? $this->app['tools']->getValue('start_date') : date('Y-m-01');
+					$end_date   = (isset($_REQUEST['end_date'])) ? $this->app['tools']->getValue('end_date') : date('Y-m-t');
+					$type 		= (isset($_REQUEST['type'])) ? $this->app['tools']->getValue('type') : "expense";
+
+		        	if(!$id_user){
+						return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_USER_NOT_FOUND", $lang));
+					}
+
+		            if ($id_transaction) {
+		                return $this->onReturn($_transactions->getById($id_user, $id_transaction, $lang));
+		            } else {
+		                return $this->onReturn($_transactions->getByDateRange($id_user, $start_date, $end_date, $type));
+		            }
+		            break;
+
+		        //CREATE
+		        case 'POST':
+		            return "To be implemented";
+		        //UPDATE
+		        case 'PUT':
+		        case 'PATCH':
+		            return "To be implemented";
+				//DELETE
+		        case 'DELETE':
+
+					if(!$id_user){
+						return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_USER_NOT_FOUND", $lang));
+					}
+
+		            if ($id_category) {
+		                return $this->onReturn($_transactions->delete($id_user, $id_transaction, $lang));
+		            } else {
+		                return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_ID_REQUIRED", $lang));
 		            }
 		        default:
 		            $this->result(false, 'error', 'Method not allowed', 405);

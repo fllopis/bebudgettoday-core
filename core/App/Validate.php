@@ -147,5 +147,33 @@ class Validate
 
 		return true;
 	}
+
+	/************************************
+     *									*
+     *		TRANSACTIONS VALIDATIONS	*
+     *									*						
+     ************************************/
+
+	public function isValidDate($date){
+		$d = \DateTime::createFromFormat('Y-m-d', $date);
+		return $d && $d->format('Y-m-d') === $date;
+	}
+
+	 public function valid_transactions_dates($start_date, $end_date, $lang){
+		//Validating dates format
+		if (!$start_date || !$end_date) {
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATIONS_DATES_ERROR", $lang);
+		}
+		if ($start_date !== null && !$this->isValidDate($start_date)) {
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATIONS_DATE_START_ERROR", $lang);
+		}
+		if ($end_date !== null && !$this->isValidDate($end_date)) {
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATIONS_DATE_END_ERROR", $lang);
+		}
+		if (new \DateTime($start_date) > new \DateTime($end_date)) {
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATIONS_DATE_START_LATER_END", $lang);
+		}
+		return true;
+	}
 }
 ?>

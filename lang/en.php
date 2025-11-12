@@ -44,7 +44,24 @@
         'CATEGORY_VALIDATION_DELETING_ERROR' => 'There was an error during category deletion. Please, try again.',
         'CATEGORY_VALIDATION_DELETING_SUCCESS' => 'Category deleted successfully.',
         'CATEGORY_VALIDATION_DELETING_NOT_FOUND' => 'Category not found or already deleted.',
-        'CATEGORY_VALIDATION_NOT_FOUND_FOR_USER' => 'Category not found for this user.'
+        'CATEGORY_VALIDATION_NOT_FOUND_FOR_USER' => 'Category not found for this user.',
+
+        /****************************
+         *                          *
+         *       TRANSACTIONS       *
+         *                          *
+         ****************************/
+
+        'TRANSACTION_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.',
+        'TRANSACTION_VALIDATION_ID_REQUIRED' => 'Transaction ID is required for this action.',
+        'TRANSACTION_VALIDATION_DELETING_ERROR' => 'There was an error during transaction deletion. Please, try again.',
+        'TRANSACTION_VALIDATION_DELETING_SUCCESS' => 'Transaction deleted successfully.',
+        'TRANSACTION_VALIDATION_DELETING_NOT_FOUND' => 'Transaction not found or already deleted.',
+        'TRANSACTION_VALIDATION_NOT_FOUND_FOR_USER' => 'Transaction not found for this user.',
+        'TRANSACTION_VALIDATIONS_DATES_ERROR' => 'Both dates filters are required',
+        'TRANSACTION_VALIDATIONS_DATE_START_ERROR' => 'Start date has invalid format. Format must be YYYY-MM-DD',
+        'TRANSACTION_VALIDATIONS_DATE_END_ERROR' => 'End date has invalid format. Format must be YYYY-MM-DD',
+        'TRANSACTION_VALIDATIONS_DATE_START_LATER_END' => 'The start date cannot be later than the end date'
     ];
 
 ?>
