@@ -79,13 +79,14 @@ class ApiController
 	     ****************************************/
 
 		//API:: Dashboard
-		$this->add('dashboard',function(){
+		$this->add('statistics',function(){
 			//Validating JWT Token
 			$this->validateJWT();
 			
 			//Default vars
-			$id_user 	= (isset($_REQUEST['id_user'])) ? $this->app['tools']->getValue('id_user') : null;
-			$lang 		= (isset($_REQUEST['lang'])) ? $this->app['tools']->getValue('lang') : _DEFAULT_APP_LANGUAGE_;
+			$stadiscticType = $this->app['tools']->getValue('id');
+			$id_user 		= (isset($_REQUEST['id_user'])) ? $this->app['tools']->getValue('id_user') : null;
+			$lang 			= (isset($_REQUEST['lang'])) ? $this->app['tools']->getValue('lang') : _DEFAULT_APP_LANGUAGE_;
 
 			//Load class
 			$_dashboard = new Dashboard($this->app);
@@ -93,16 +94,33 @@ class ApiController
 			switch($_SERVER['REQUEST_METHOD']) {
 				//GET
 		        case 'GET':
-		        	//Default params
-					$type 		= (isset($_REQUEST['type'])) ? $this->app['tools']->getValue('type') : "expense";
-					$start_date = $this->app['tools']->getValue('start_date') ?? date('Y-m-01');
-					$end_date   = $this->app['tools']->getValue('end_date') ?? date('Y-m-t');
-
 		        	if(!$id_user){
 						return $this->onReturn($this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_USER_NOT_FOUND", $lang));
 					}
 
-					return $this->onReturn($_dashboard->getAllCategoriesWithStats($id_user, $type, $start_date, $end_date));	            
+					//Default params
+					$type 		= (isset($_REQUEST['type'])) ? $this->app['tools']->getValue('type') : "expense";
+					$start_date = (isset($_REQUEST['start_date'])) ? $this->app['tools']->getValue('start_date') : date('Y-m-01');
+					$end_date   = (isset($_REQUEST['end_date'])) ? $this->app['tools']->getValue('end_date') : date('Y-m-t');
+					$currency	= (isset($_REQUEST['currency'])) ? $this->app['tools']->getValue('currency') : "";
+
+		        	//Controling stadistic type
+					switch($stadiscticType){
+						case 'categories-stats':
+							return $this->onReturn($_dashboard->getAllCategoriesWithStats($id_user, $type, $start_date, $end_date));
+							break;
+						case 'monthly-summary':
+							//The monthly summary for user
+							return $this->onReturn($_dashboard->getMonthSummary($id_user, $start_date, $end_date));
+							break;
+						case 'saving-motivation':
+							//Get the saving motivation to show or not.
+							return $this->onReturn($_dashboard->getSavingsMessage($id_user, $start_date, $end_date, $lang, $currency));
+							break;
+						default:
+							$this->result(false, 'error', 'Statidistics type not found', 400);
+							break;
+					}	            
 		            break;
 		        default:
 		            $this->result(false, 'error', 'Method not allowed', 405);
@@ -214,11 +232,16 @@ class ApiController
 
 		        //CREATE
 		        case 'POST':
-		            return "To be implemented";
+		            return $this->handleSave(0, 'transactions');
+
 		        //UPDATE
 		        case 'PUT':
 		        case 'PATCH':
-		            return "To be implemented";
+		            if (!$id_transaction) {
+		                return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_ID_REQUIRED", $lang));
+		            }
+		            return $this->handleSave($id_category, 'transactions');
+
 				//DELETE
 		        case 'DELETE':
 

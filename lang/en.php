@@ -28,6 +28,18 @@
 
         /****************************
          *                          *
+         *        DASHBOARD         *
+         *                          *
+         ****************************/
+
+        'DASHBOARD_POSITIVE_SALARY' => 'Excellent! This month you achieved a positive balance of %currency_init%%amount%%currency_end%',
+        'DASHBOARD_NOT_DATA' => 'There is insufficient data from the previous month to make a meaningful comparison of the balance.',
+        'DASHBOARD_POSITIVE_VARIATION' => 'Excellent! You achieved a monthly balance of %variation%%, which is better than last month. Keep up the good work!',
+        'DASHBOARD_NEGATIVE_VARIATION' => 'Your balance was %variation%% lower than last month. Review your expenses!',
+        'DASHBOARD_EQUAL_VARIATION' => 'You kept exactly the same balance as last month. Financial stability!',
+
+        /****************************
+         *                          *
          *        CATEGORIES        *
          *                          *
          ****************************/
@@ -61,7 +73,8 @@
         'TRANSACTION_VALIDATIONS_DATES_ERROR' => 'Both dates filters are required',
         'TRANSACTION_VALIDATIONS_DATE_START_ERROR' => 'Start date has invalid format. Format must be YYYY-MM-DD',
         'TRANSACTION_VALIDATIONS_DATE_END_ERROR' => 'End date has invalid format. Format must be YYYY-MM-DD',
-        'TRANSACTION_VALIDATIONS_DATE_START_LATER_END' => 'The start date cannot be later than the end date'
+        'TRANSACTION_VALIDATIONS_DATE_START_LATER_END' => 'The start date cannot be later than the end date',
+        'TRANSACTION_VALIDATION_ID_REQUIRED' => 'Transaction ID is required for this action.'
     ];
 
 ?>

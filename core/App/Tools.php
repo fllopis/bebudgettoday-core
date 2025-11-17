@@ -892,5 +892,16 @@ class Tools
 		else
 			$_SESSION['css_paths'][] = $path;
 	}
+
+	public function getCurrencies(){
+		$filePath = _PATH_ . '/core/Helpers/Currencies/currencies.php';
+
+	    if (!file_exists($filePath)) {
+	        return [];
+	    }
+	    
+	    $currencies = require $filePath;
+	    return is_array($currencies) ? $currencies : [];
+	}
 }
 ?>
