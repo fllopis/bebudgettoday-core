@@ -175,5 +175,25 @@ class Validate
 		}
 		return true;
 	}
+
+	public function valid_transaction($id_transaction, $data, $lang = _DEFAULT_APP_LANGUAGE_){
+		if($data['id_category'] == ""){
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_CATEGORY_EMPTY", $lang, ['type' => $data['type']]);
+		}
+		if($data['id_category'] != "" && $this->app['bd']->countRows("SELECT * FROM categories WHERE id = '".$data['id_category']."' AND id_user = '".$data['id_user']."'") == 0){
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_CATEGORY_NOT_OWNER", $lang);
+		}
+		if( $data['amount'] == "" || $data['amount'] == '0.00' || $data['amount'] <= '0' ){
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_AMOUNT_EMPTY", $lang);
+		}
+		if($data['description'] == ""){
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_DESCRIPTION_EMPTY", $lang);
+		}
+		if($data['transaction_date'] == ""){
+			return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_TRANSACTION_DATE_EMPTY", $lang, ['type' => $data['type']]);
+		}
+
+		return true;
+	}
 }
 ?>

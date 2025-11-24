@@ -26,6 +26,8 @@
         'AUTH_REGISTRATION_PROVIDER_TOKEN_WRONG' => 'Wrong token for registration. Please, try again 😃.',
         'AUTH_REGISTRATION_UNKNOW_ERROR' => 'There was an error during the registration. Please, try again.',
 
+        'AUTH_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.',
+
         /****************************
          *                          *
          *        DASHBOARD         *
@@ -51,7 +53,6 @@
         'CATEGORY_VALIDATION_CREATION_UNKNOW_ERROR' => 'There was an error during the category creation. Please, try again.',
         'CATEGORY_VALIDATION_UPDATE_UNKNOW_ERROR' => 'There was an error during the category update. Please, try again.',
         'CATEGORY_VALIDATION_UNKNOW_ERROR' => 'There was an error during category management. Please, try again.',
-        'CATEGORY_VALIDATION_USER_NOT_FOUND' => 'User not found, please try again or do login.',
         'CATEGORY_VALIDATION_ID_REQUIRED' => 'Category ID is required for this action.',
         'CATEGORY_VALIDATION_DELETING_ERROR' => 'There was an error during category deletion. Please, try again.',
         'CATEGORY_VALIDATION_DELETING_SUCCESS' => 'Category deleted successfully.',
@@ -74,7 +75,15 @@
         'TRANSACTION_VALIDATIONS_DATE_START_ERROR' => 'Start date has invalid format. Format must be YYYY-MM-DD',
         'TRANSACTION_VALIDATIONS_DATE_END_ERROR' => 'End date has invalid format. Format must be YYYY-MM-DD',
         'TRANSACTION_VALIDATIONS_DATE_START_LATER_END' => 'The start date cannot be later than the end date',
-        'TRANSACTION_VALIDATION_ID_REQUIRED' => 'Transaction ID is required for this action.'
+        'TRANSACTION_VALIDATION_ID_REQUIRED' => 'Transaction ID is required for this action.',
+        'TRANSACTION_VALIDATION_CREATION_UNKNOW_ERROR' => 'There was an error during the transaction creation. Please, try again.',
+        'TRANSACTION_VALIDATION_UPDATE_UNKNOW_ERROR' => 'There was an error during the transaction update. Please, try again.',
+        'TRANSACTION_VALIDATION_UNKNOW_ERROR' => 'There was an error during transaction management. Please, try again.',
+        'TRANSACTION_VALIDATION_AMOUNT_EMPTY' => 'The amount entered is invalid; it cannot be empty and must be greater than 0.',
+        'TRANSACTION_VALIDATION_DESCRIPTION_EMPTY' => 'The transaction description cannot be empty. What is it related to? 🤗',
+        'TRANSACTION_VALIDATION_CATEGORY_EMPTY' => 'Select a category for this %type% 😐',
+        'TRANSACTION_VALIDATION_TRANSACTION_DATE_EMPTY' => 'When was this %type% performed? Please indicate a date.',
+        'TRANSACTION_VALIDATION_CATEGORY_NOT_OWNER' => 'There was a problem associating the transaction with the category 😥. Please choose another and try again.'
     ];
 
 ?>

@@ -82,6 +82,58 @@ class Transactions
     }
 
     /** 
+     * Function to create or update a specific transaction
+     * @param int $id_user
+     * @param int $id_transaction
+     * @param array $data
+     * @param string $lang
+     * @return object: With transaction data
+     */
+    public function managTransaction($id_user, $id_transaction, $data, $lang){
+        //Transaction validations
+        $validationResponse = $this->app['validate']->valid_transaction($id_transaction, $data, $lang);
+        if($validationResponse !== true){
+            return $validationResponse;
+        }
+
+        //Updating category
+        $dataToManage                       = [];
+        $dataToManage['id_category']        = (isset($data['id_category'])) ? $data['id_category'] : "-";
+        $dataToManage['amount']             = (isset($data['amount'])) ? $data['amount'] : "0.00";
+        $dataToManage['description']        = (isset($data['description'])) ? $data['description'] : "";
+        $dataToManage['transaction_date']   = (isset($data['transaction_date'])) ? $data['transaction_date'] : "";
+
+        $action = ($id_transaction != '0') ? 'update' : 'creation';
+
+        switch ($action) {
+            case 'creation':
+                $dataToManage['id_user']        = $data['id_user'];
+                $dataToManage['type']           = $data['type'];
+                $dataToManage['created_at']    = $this->app['tools']->datetime();
+                $dataToManage['updated_at']     = $this->app['tools']->datetime();
+
+                if($this->app['bd']->insert('transactions', $dataToManage)){
+                    $id_transaction = $this->app['bd']->lastId();
+                    return $this->getById($id_user, $id_transaction, $lang);
+                } else{
+                    return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_CREATION_UNKNOW_ERROR", $lang);
+                }
+                break;
+            case 'update':
+                $dataToManage['updated_at'] = $this->app['tools']->datetime();
+
+                if($this->app['bd']->update('transactions', $dataToManage, ' id_user = "'.$id_user.'" AND id = "'.$id_transaction.'"')){
+                    return $this->getById($id_user, $id_transaction, $lang);
+                } else{
+                    return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_UPDATE_UNKNOW_ERROR", $lang);
+                }
+                break;
+        }
+
+        return $this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_UNKNOW_ERROR", $lang);
+    }
+
+    /** 
      * Function to delete a transaction
      * @param string $id_user
      * @param string $id_transaction

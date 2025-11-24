@@ -240,7 +240,7 @@ class ApiController
 		            if (!$id_transaction) {
 		                return $this->onReturn($this->app['lang']->getTranslationStatic("TRANSACTION_VALIDATION_ID_REQUIRED", $lang));
 		            }
-		            return $this->handleSave($id_category, 'transactions');
+		            return $this->handleSave($id_transaction, 'transactions');
 
 				//DELETE
 		        case 'DELETE':
@@ -270,7 +270,7 @@ class ApiController
 
 	    if (!$id_user) {
 	        return $this->onReturn(
-	            $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_USER_NOT_FOUND", $lang)
+	            $this->app['lang']->getTranslationStatic("AUTH_VALIDATION_USER_NOT_FOUND", $lang)
 	        );
 	    }
 
@@ -280,6 +280,13 @@ class ApiController
 
 				return $this->onReturn(
 					$_categories->manageCategory($id_user, $id, $data, $lang)
+				);
+				break;
+			case 'transactions':
+				$_transactions = new Transactions($this->app);
+
+				return $this->onReturn(
+					$_transactions->managTransaction($id_user, $id, $data, $lang)
 				);
 				break;
 		}

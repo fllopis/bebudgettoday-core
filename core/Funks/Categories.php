@@ -24,7 +24,7 @@ class Categories
                 'name' => 'Salary',
                 'icon' => '',
                 'color' => '#35a989',
-                'creation_at' => $dateOfCreation,
+                'created_at' => $dateOfCreation,
                 'updated_at' => $dateOfCreation,
             ],
             '1' => [
@@ -33,7 +33,7 @@ class Categories
                 'name' => 'Home',
                 'icon' => '',
                 'color' => '#f16c69',
-                'creation_at' => $dateOfCreation,
+                'created_at' => $dateOfCreation,
                 'updated_at' => $dateOfCreation,
             ],
             '2' => [
@@ -42,7 +42,7 @@ class Categories
                 'name' => 'Car',
                 'icon' => '',
                 'color' => '#4c86b9',
-                'creation_at' => $dateOfCreation,
+                'created_at' => $dateOfCreation,
                 'updated_at' => $dateOfCreation,
             ],
             '3' => [
@@ -51,7 +51,7 @@ class Categories
                 'name' => 'Supermarket',
                 'icon' => '',
                 'color' => '#f5b225',
-                'creation_at' => $dateOfCreation,
+                'created_at' => $dateOfCreation,
                 'updated_at' => $dateOfCreation,
             ],
         ];
@@ -142,12 +142,12 @@ class Categories
             case 'creation':
                 $dataToManage['id_user']        = $data['id_user'];
                 $dataToManage['type']           = $data['type'];
-                $dataToManage['creation_at']    = $this->app['tools']->datetime();
+                $dataToManage['created_at']    = $this->app['tools']->datetime();
                 $dataToManage['updated_at']     = $this->app['tools']->datetime();
 
                 if($this->app['bd']->insert('categories', $dataToManage)){
                     $id_category = $this->app['bd']->lastId();
-                    return $this->getById($id_user, $id_category);
+                    return $this->getById($id_user, $id_category, $lang);
                 } else{
                     return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_CREATION_UNKNOW_ERROR", $lang);
                 }
@@ -156,7 +156,7 @@ class Categories
                 $dataToManage['updated_at'] = $this->app['tools']->datetime();
 
                 if($this->app['bd']->update('categories', $dataToManage, ' id_user = "'.$id_user.'" AND id = "'.$id_category.'"')){
-                    return $this->getById($id_user, $id_category);
+                    return $this->getById($id_user, $id_category, $lang);
                 } else{
                     return $this->app['lang']->getTranslationStatic("CATEGORY_VALIDATION_UPDATE_UNKNOW_ERROR", $lang);
                 }
