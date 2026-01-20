@@ -67,6 +67,7 @@ class Users
             'name'          => $datos->name,
             'email'         => $datos->email,
             'avatar_url'    => $datos->avatar_url,
+            'currency'      => $datos->currency,
             'created_at'    => $datos->created_at,
             'token'         => $jwtToken
         ];
@@ -84,13 +85,47 @@ class Users
             return $validationResponse;
         }
 
-        //Get data user to check if is loged or not.
-		$datos = $this->app['bd']->fetchRow("
-            SELECT *
-            FROM users
-            WHERE auth_provider = '".$auth_provider."'
-            AND provider_token = '".$provider_token."'
-        ");
+        switch ($auth_provider) {
+            case 'google':
+                //Checking token with Google.
+                $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . $provider_token;
+                $response = file_get_contents($url);
+                $gPayload = json_decode($response, true);
+
+                if (!$gPayload || isset($gPayload['error'])) {
+                     return ["type" => "error", "error" => "Token de Google inválido"];
+                }
+
+                $provider_token = $gPayload['sub'];
+                $email          = $gPayload['email'];
+                $name           = $gPayload['name'];
+                $avatar         = $gPayload['picture'];
+
+                $datos = $this->app['bd']->fetchRow("SELECT * FROM users WHERE provider_token = '$provider_token' AND auth_provider = 'google'");
+
+                if (!$datos) {
+                    //If doesn't exists then we create the user.
+                    $this->app['bd']->insert("users", [
+                        'auth_provider'     => 'google',
+                        'provider_token'    => $provider_token,
+                        'account_type'      => 'standard',
+                        'name'              => $name,
+                        'email'             => $email,
+                        'avatar_url'        => $avatar,
+                        'currency'          => '€',
+                        'created_at'        => $this->app['tools']->datetime(),
+                        'updated_at'        => $this->app['tools']->datetime()
+                    ]);
+
+                    //And then get data another time from real user.
+                    $datos = $this->app['bd']->fetchRow("SELECT * FROM users WHERE provider_token = '$provider_token'");
+                }
+
+                break;
+                
+            default:
+                return ["type" => "error", "error" => "Provider no soportado"];
+        }
 
         //Data to include in JWT Token
         $payload = [
@@ -108,6 +143,7 @@ class Users
             'name'          => $datos->name,
             'email'         => $datos->email,
             'avatar_url'    => $datos->avatar_url,
+            'currency'      => $datos->curreny,
             'created_at'    => $datos->created_at,
             'token'         => $jwtToken
         ];
@@ -138,6 +174,7 @@ class Users
                 'email'             => $data['email'],
                 'password'          => (isset($data['password']) && $data['password'] != "") ? $this->app['tools']->md5($data['password']) : '',
                 'avatar_url'        => isset($data['avatar_url']) ? $data['avatar_url'] : '',
+                'currency'          => '€',
                 'created_at'        => $this->app['tools']->datetime(),
                 'updated_at'        => $this->app['tools']->datetime()
             ]);
